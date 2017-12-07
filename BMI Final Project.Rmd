@@ -1,0 +1,18 @@
+---
+title: "BMI Final Project"
+author: "Saila Chen"
+date: "December 7, 2017"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(janitor)
+library(readxl)
+```
+
+interest variables: patientid, visitid,losdays2, mews,  
+```{r}
+gh_data=read_excel("GHProject_Dataset.xlsx") %>% 
+  clean_names()
+```
+
