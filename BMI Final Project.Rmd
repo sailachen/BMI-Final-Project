@@ -8,11 +8,23 @@ output: html_document
 library(tidyverse)
 library(janitor)
 library(readxl)
+library(stringr)
 ```
 
-interest variables: patientid, visitid,losdays2, mews,  
+interest variables: patientid, visitid,losdays2, admitedtm, is30dayreadmit, mews, evisit, icu_flag,ageyear, gender, insurancetype. 
 ```{r}
 gh_data=read_excel("GHProject_Dataset.xlsx") %>% 
-  clean_names()
+  clean_names() %>% 
+  filter(!is.na(mews)) %>% 
+  select(patientid, visitid,losdays2, admitdtm, race, is30dayreadmit, mews, evisit, icu_flag,ageyear, gender, insurancetype) %>% 
+  filter(icu_flag==0) %>% 
+  select(-admitdtm,-icu_flag)
+
+gh_clean=gh_data[!duplicated(gh_data$patientid),]
+```
+
+```{r}
+fit1=lm(losdays2~is30dayreadmit+mews+evisit+ageyear+gender+insurancetype+race,data=gh_clean)
+summary(fit1)
 ```
 
