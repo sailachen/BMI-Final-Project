@@ -20,7 +20,7 @@ source:https://link.springer.com/article/10.1007%2Fs00134-001-1132-2?LI=true
 ```{r}
 gh_data=read_excel("GHProject_Dataset.xlsx") %>% 
   clean_names() %>% 
-  select(-bmi) %>% 
+  dplyr::select(-bmi) %>% 
   na.omit() %>% 
   filter(icu_flag==0) %>% 
   mutate(los_log=log(losdays2))
