@@ -9,22 +9,50 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 library(stringr)
+library(HH)
+library("leaps")
 ```
 
-interest variables: patientid, visitid,losdays2, admitedtm, is30dayreadmit, mews, evisit, icu_flag,ageyear, gender, insurancetype. 
+interest variables: patientid, visitid,losdays2, admitedtm, is30dayreadmit, mews, evisit, icu_flag, ageyear, gender, insurancetype. 
+
+source:https://link.springer.com/article/10.1007%2Fs00134-001-1132-2?LI=true
+
 ```{r}
 gh_data=read_excel("GHProject_Dataset.xlsx") %>% 
   clean_names() %>% 
-  filter(!is.na(mews)) %>% 
-  select(patientid, visitid,losdays2, admitdtm, race, is30dayreadmit, mews, evisit, icu_flag,ageyear, gender, insurancetype) %>% 
+  select(-bmi) %>% 
+  na.omit() %>% 
   filter(icu_flag==0) %>% 
-  select(-admitdtm,-icu_flag)
-
+  mutate(los_log=log(losdays2))
 gh_clean=gh_data[!duplicated(gh_data$patientid),]
 ```
 
 ```{r}
-fit1=lm(losdays2~is30dayreadmit+mews+evisit+ageyear+gender+insurancetype+race,data=gh_clean)
+fit1=lm(los_log~is30dayreadmit+mews+cindex+evisit+ageyear+gender+insurancetype+race+religion+bpsystolic+o2sat+temperature+heartrate+respirationrate+bpdiastolic,data=gh_clean)
 summary(fit1)
+```
+
+```{r}
+summary(lm(los_log ~ is30dayreadmit + mews + cindex + evisit + ageyear + 
+    gender + insurancetype + bpsystolic + temperature + heartrate + 
+    respirationrate + bpdiastolic,data=gh_clean))
+
+```
+
+```{r}
+best <- function(model, ...) 
+{
+  subsets <- regsubsets(formula(model), model.frame(model), ...)
+  subsets <- with(summary(subsets),
+                  cbind(p = as.numeric(rownames(which)), which, rss, rsq, adjr2, cp, bic))
+  
+  return(subsets)
+}  
+round(best(fit1, nbest = 2), 4)
+```
+
+
+```{r}
+step(fit1, direction='backward')
 ```
 
