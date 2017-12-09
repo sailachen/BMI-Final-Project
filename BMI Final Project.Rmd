@@ -28,6 +28,20 @@ gh_clean=gh_data[!duplicated(gh_data$patientid),]
 ```
 
 ```{r}
+plot(gh_clean$mews,gh_clean$los_log)
+plot(gh_clean$cindex,gh_clean$los_log)
+plot(gh_clean$evisit,gh_clean$los_log)
+plot(gh_clean$ageyear,gh_clean$los_log)
+plot(gh_clean$bpsystolic,gh_clean$los_log)
+plot(gh_clean$o2sat,gh_clean$los_log)
+plot(gh_clean$temperature,gh_clean$los_log)
+plot(gh_clean$heartrate,gh_clean$los_log)
+plot(gh_clean$ageyear,gh_clean$los_log)
+plot(gh_clean$respirationrate,gh_clean$los_log)
+plot(gh_clean$bpdiastolic,gh_clean$los_log)
+```
+
+```{r}
 fit1=lm(los_log~is30dayreadmit+mews+cindex+evisit+ageyear+gender+insurancetype+race+religion+bpsystolic+o2sat+temperature+heartrate+respirationrate+bpdiastolic,data=gh_clean)
 summary(fit1)
 ```
